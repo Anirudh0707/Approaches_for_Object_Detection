@@ -81,8 +81,12 @@ def getBoundingBoxAndCentroid(image, boxes, labels, scores, score_threshold=0.5)
     for box, label, score in zip(boxes, labels, scores):
         if score > score_threshold and label == 37:  # Sports Ball label = 37
             # Given only one 1 ball per image
-            output = cv2.rectangle(output, (box[0], box[1]), (box[2], box[3]), (0,0,255), 3)
-            centroid = np.array([ (box[0] + box[2])/2 , (box[1] + box[3])/2 ])
+            x0 = np.clip(box[0], 0, width)
+            x1 = np.clip(box[2], 0, width)
+            y0 = np.clip(box[1], 0, height)
+            y1 = np.clip(box[3], 0, height)
+            output = cv2.rectangle(output, (x0, y0), (x1, y1), (0,0,255), 3)
+            centroid = np.array([ (x0 + x1)//2 , (y0 + y1)//2 ])
             # Predictions come in descending score order. Due to the one frame, one ball assumption, we break the loop after one ball detection
             break
     return output, centroid
