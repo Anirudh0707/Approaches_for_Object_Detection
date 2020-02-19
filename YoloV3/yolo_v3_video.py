@@ -9,7 +9,6 @@ import os
 from util import *
 from darknet import Darknet
 import random 
-import pickle as pkl
 
 def letterbox_image(img, inp_dim):
     '''resize image with unchanged aspect ratio using padding'''
@@ -45,10 +44,10 @@ def write(output, img):
     Takes each of the BBox predictions and draws a rectangle around the detected objects
     """
     for i in range(len(output)):
-        x = output[i]
-        c1 = tuple(x[1:3].int())
-        c2 = tuple(x[3:5].int())
-        cls = int(x[-1])
+        x = output[i].astype("int32")
+        c1 = tuple(x[1:3])
+        c2 = tuple(x[3:5])
+        cls = x[-1]
         label = "{0}".format(classes[cls])
         color = (0,0,255) # Red
         centroid = np.array([0,0])
@@ -110,6 +109,7 @@ if __name__ == '__main__':
     width = 1920; height = 1080
     out = cv2.VideoWriter(videoPathOut,cv2.VideoWriter_fourcc('M','J','P','G'), 30, (1920, 1080))
     centroid_list = []
+    start = time.time()
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
@@ -120,11 +120,9 @@ if __name__ == '__main__':
                 im_dim = im_dim.cuda()
                 img = img.cuda()
             
-            start = time.time()
             # Predict the output
             with torch.no_grad():   
                 output = model(Variable(img), CUDA)
-            # print("Time Taken for a frame", time.time() - start)
             
             # Non Maximal Suppression and confidence thresholding
             output = write_results(output, confidence, num_classes, nms = True, nms_conf = nms_thesh)
@@ -141,7 +139,7 @@ if __name__ == '__main__':
                 output[i, [2,4]] = torch.clamp(output[i, [2,4]], 0.0, im_dim[i,1])
 
             # Draw the bounding boxes and obtain the centroid
-            out_im, centroid = write(output, orig_im)
+            out_im, centroid = write(output.cpu().detach().numpy(), orig_im)
             centroid_list.append(centroid)
             
             cv2.imshow("frame", orig_im)
@@ -151,7 +149,7 @@ if __name__ == '__main__':
                 break            
         else:
             break
-
+print("Time Taken for a frame", time.time() - start)
 centroid_list = np.stack(centroid_list,0)
 np.save(arraySaveFileName, centroid_list)
 print("Saving Centroid List")
@@ -159,10 +157,11 @@ out.release()
 cap.release()
 
 frame_count = len(centroid_list)
-array_to_find_nonzeros = np.mean(centroid_list, axis=1)
+array_to_find_nonzeros = np.mean(np.abs(centroid_list), axis=1)
+temp = array_to_find_nonzeros[array_to_find_nonzeros==0]
 non_zero_index = np.nonzero(array_to_find_nonzeros)
 print("Frames :: ", frame_count)
-print("Frame which had a sports ball detected :: ", frame_count - len(non_zero_index))
+print("Frame which had a sports ball detected :: ", frame_count - len(temp))
 
 plt.scatter(centroid_list[non_zero_index,0], centroid_list[non_zero_index,1])
 # Due to the top left being origin (0,0) while plotting the origin will be at the bottom
