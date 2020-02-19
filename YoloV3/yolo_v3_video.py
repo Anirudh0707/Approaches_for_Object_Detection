@@ -149,7 +149,7 @@ if __name__ == '__main__':
                 break            
         else:
             break
-print("Time Taken for a frame", time.time() - start)
+print("Time Taken", time.time() - start)
 centroid_list = np.stack(centroid_list,0)
 np.save(arraySaveFileName, centroid_list)
 print("Saving Centroid List")
