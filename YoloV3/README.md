@@ -1,5 +1,6 @@
 # Yolo V3
-The darknet based faster rcnn from pytorch is used. The model is pretrained. The weights can be downloaded from [here](https://pjreddie.com/media/files/yolov3.weights) 
+The darknet based faster rcnn from pytorch is used. The model is pretrained.<br/>
+The weights need to be be downloaded before execution from [here](https://pjreddie.com/media/files/yolov3.weights). Place the weights in the same folder as the Python file
 
 This implmentation comprises of 2 files:
 1) FasterRCNN_video.py
