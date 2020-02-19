@@ -135,8 +135,11 @@ print("Saving Centroid List")
 out.release()
 cap.release()
 
+frame_count = len(centroid_list)
 array_to_find_nonzeros = np.mean(centroid_list, axis=1)
 non_zero_index = np.nonzero(array_to_find_nonzeros)
+print("Frames :: ",frame_count)
+print("Frame which had a sports ball detected :: ", frame_count - len(non_zero_index))
 
 plt.scatter(centroid_list[non_zero_index,0], centroid_list[non_zero_index,1])
 # Due to the top left being origin (0,0) while plotting the origin will be at the bottom
