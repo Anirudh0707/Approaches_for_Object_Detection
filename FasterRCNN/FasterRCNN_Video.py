@@ -1,9 +1,8 @@
 import torch 
 import torchvision
 import numpy as np
-# from PIL import Image
-# import os
 import time
+import os
 import matplotlib.pyplot as plt
 import cv2
 
@@ -94,7 +93,7 @@ def getBoundingBoxAndCentroid(image, boxes, labels, scores, score_threshold=0.5)
 #################################################################################################################################
 # Strings and Thresholds
 #################################################################################################################################
-videofile = input("Enter Filename With Extension :: ")
+videofile = input("Enter Filename With Extension (Eg : video.avi) (Recommended file types : avi) :: ")
 videofile_withoutextension = videofile.split(".")[0]
 arraySaveFileName = "out_" + videofile_withoutextension
 videoPathOut = "out_"+ videofile
@@ -107,6 +106,7 @@ score_thresh = 0.2
 #################################################################################################################################
 print("Video File :: ", videofile)
 cap = cv2.VideoCapture(videofile)
+assert os.path.isfile(videofile), 'Video does not exist'
 assert cap.isOpened(), 'Cannot capture source'
 centroid_list = []
 
@@ -128,7 +128,7 @@ while cap.isOpened():
             break        
     else:
         break
-print("Detectin Complete")
+print("Detection Complete")
 centroid_list = np.stack(centroid_list,0)
 np.save(arraySaveFileName, centroid_list)
 print("Saving Centroid List")
