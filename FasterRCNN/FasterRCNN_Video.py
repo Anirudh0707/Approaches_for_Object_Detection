@@ -114,6 +114,7 @@ centroid_list = []
 width = 1920; height = 1080
 out = cv2.VideoWriter(videoPathOut,cv2.VideoWriter_fourcc('M','J','P','G'), 30, (1920, 1080))
 
+start = time.time()
 while cap.isOpened():
     ret, frame = cap.read()
     if ret:
@@ -129,6 +130,7 @@ while cap.isOpened():
     else:
         break
 print("Detection Complete")
+print("Time Taken", time.time() - start)
 centroid_list = np.stack(centroid_list,0)
 np.save(arraySaveFileName, centroid_list)
 print("Saving Centroid List")
@@ -137,9 +139,10 @@ cap.release()
 
 frame_count = len(centroid_list)
 array_to_find_nonzeros = np.mean(centroid_list, axis=1)
+temp = array_to_find_nonzeros[array_to_find_nonzeros==0]
 non_zero_index = np.nonzero(array_to_find_nonzeros)
 print("Frames :: ",frame_count)
-print("Frame which had a sports ball detected :: ", frame_count - len(non_zero_index))
+print("Frame which had a sports ball detected :: ", frame_count - len(temp))
 
 plt.scatter(centroid_list[non_zero_index,0], centroid_list[non_zero_index,1])
 # Due to the top left being origin (0,0) while plotting the origin will be at the bottom
