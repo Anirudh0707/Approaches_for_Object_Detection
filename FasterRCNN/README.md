@@ -2,8 +2,8 @@
 The resnet based faster rcnn from pytorch is used. The model is pretrained.
 
 This implmentation comprises of 2 files:
-1) FasterRCNN_video.py
-2) FasterRCNN_singleframe.py
+1) FasterRCNN_Video.py
+2) FasterRCNN_Single_Image.py
 
 ### FasterRCNN_Video.py
 **Inputs**    : Video File name (video.avi)<br/>
