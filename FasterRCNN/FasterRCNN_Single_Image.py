@@ -74,7 +74,7 @@ def getBoundingBoxAndCentroid(image, boxes, labels, scores, score_threshold=0.5)
     # ratio = 800.0 / min(image.shape[0], image.shape[1])
     # boxes /= ratio
     output = image.copy()
-    
+    boxes = boxes.astype(np.int32)
     # Showing boxes with score > threshold
     for box, label, score in zip(boxes, labels, scores):
         if score > score_threshold:# and label == 37:  # Sports Ball label = 37
